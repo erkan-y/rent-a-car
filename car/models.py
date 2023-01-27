@@ -32,6 +32,6 @@ class Reservation(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields = ["customer","start_date","end_date"] # same customer can not book a car for the same period
+                fields = ["customer","start_date","end_date"], name='user_rent_date' # same customer can not book a car for the same period
             )
         ]
