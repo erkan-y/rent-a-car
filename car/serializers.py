@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Car, Reservation
 
 class CarSerializer(serializers.ModelSerializer):
+    is_available = serializers.BooleanField()
     class Meta:
         model = Car
         fields = (
@@ -12,7 +13,8 @@ class CarSerializer(serializers.ModelSerializer):
             "year",
             "gear",
             "rent_per_day",
-            "availability"
+            "availability",
+            "is_available",
         )
     def get_fields(self): #instead of creating another serializer, get_fields method is used to return fields according to user condition. 
         fields = super().get_fields()
