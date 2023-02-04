@@ -27,7 +27,7 @@ class Reservation(models.Model):
     end_date = models.DateField()
 
     def __str__(self):
-        return f"Customer {self.customer} reserved {self.car}"
+        return f"Customer {self.customer} reserved {self.car} between {self.start_date}-{self.end_date}"
 
     class Meta:
         constraints = [

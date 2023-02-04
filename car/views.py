@@ -9,6 +9,7 @@ from .serializers import CarSerializer, ReservationSerializer
 from .permissions import IsStaffOrReadOnly
 
 from django.db.models import Q
+from django.utils import timezone
 
 class CarView(ModelViewSet):
     queryset = Car.objects.all()
@@ -53,6 +54,8 @@ class ReservationView(ListCreateAPIView):
 class ReservationDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
+    # lookup_field = "id" ###?can be identified as id in url
+ 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
@@ -61,10 +64,12 @@ class ReservationDetailView(RetrieveUpdateDestroyAPIView):
 
         end = serializer.validated_data.get("end_date")
         car  = serializer.validated_data.get("car")
+        start = instance.start_date
+        today = timezone.now().date()
         if Reservation.objects.filter(car=car).exists():
-            for res in Reservation.objects.filter(car=car):
-                if res.start_date < end < res.end_date:
-                    return Response({"message":"Car is not available"})
+            for res in Reservation.objects.filter(car=car, end_date__gte=today):
+                if start < res.start_date < end:
+                    return Response({'message': 'Car is not available...'})
         #checking if there is another reservation between new dates or not. 
 
-        return super().update(self, request, *args, **kwargs)
+        return super().update(request, *args, **kwargs)
